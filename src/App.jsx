@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+
+import { useState } from "react";
+import "./App.css";
+
+// Import components from Components folder
+import SearchBar from "./Components/SearchBar";
+import ProductList from "./Components/ProductList";
+
+// Static product list
+const products = [
+  { id: 1, name: "Blue T-Shirt", category: "Clothing", price: 150, inStock: true },
+  { id: 2, name: "Black Jeans", category: "Clothing", price: 300, inStock: false },
+  { id: 3, name: "Red Sneakers", category: "Shoes", price: 500, inStock: true },
+  { id: 4, name: "Wireless Mouse", category: "Accessories", price: 250, inStock: true },
+  { id: 5, name: "Office Chair", category: "Furniture", price: 1200, inStock: false },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
+  // ✅ useState hooks for filters
+  const [searchText, setSearchText] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [onlyInStock, setOnlyInStock] = useState(false);
+
+  // ✅ Filtering logic
+  const filteredProducts = products.filter((product) => {
+    const matchesName = product.name.toLowerCase().includes(searchText.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
+    const matchesStock = !onlyInStock || product.inStock;
+    return matchesName && matchesCategory && matchesStock;
+  });
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div
+      style={{
+        padding: "20px",
+        fontFamily: "Arial, sans-serif",
+        backgroundColor: "#fdfdfd",
+        minHeight: "100vh",
+        color: "#333",
+      }}
+    >
+      <h1 style={{ color: "#0077cc" }}>🛒 Product Catalogue</h1>
+
+      {/*  Filters Section */}
+      <SearchBar
+        searchText={searchText}
+        onSearchChange={setSearchText}
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+        onlyInStock={onlyInStock}
+        onInStockChange={setOnlyInStock}
+      />
+
+      {/* Product List to store filters products*/}
+      <ProductList products={filteredProducts} />
+    </div>
+  );
 }
 
-export default App
+export default App;
